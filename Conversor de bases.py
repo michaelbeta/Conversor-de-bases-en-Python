@@ -1,25 +1,115 @@
 #########################################################################
 #
 #	Conversor de bases numericas
-#
+#       Autores:
 #	Michael Betancourt Mora B81126
+#       Fernando Sánchez Moraga B97268
+#       Michael Rodriguez Quesada B96713
+#
+#
 #
 #########################################################################
 
-## Funcion que convierte un numero binario a decimal
+##Funciones obtenidas gracias  parzibyte (https://parzibyte.me/blog/2020/12/15/conversor-numeros-python/)
+def obtener_caracter_hexadecimal(valor):
+    # Lo necesitamos como cadena
+    valor = str(valor)
+    equivalencias = {
+        "10": "a",
+        "11": "b",
+        "12": "c",
+        "13": "d",
+        "14": "e",
+        "15": "f",
+    }
+    if valor in equivalencias:
+        return equivalencias[valor]
+    else:
+        return valor
+
+
+def decimal_a_hexadecimal(decimal):
+    hexadecimal = ""
+    while decimal > 0:
+        residuo = decimal % 16
+        verdadero_caracter = obtener_caracter_hexadecimal(residuo)
+        hexadecimal = verdadero_caracter + hexadecimal
+        decimal = int(decimal / 16)
+    return hexadecimal
+
+
+def obtener_valor_real(caracter_hexadecimal):
+    equivalencias = {
+        "f": 15,
+        "e": 14,
+        "d": 13,
+        "c": 12,
+        "b": 11,
+        "a": 10,
+    }
+    if caracter_hexadecimal in equivalencias:
+        return equivalencias[caracter_hexadecimal]
+    else:
+        return int(caracter_hexadecimal)
+
+
+def hexadecimal_a_decimal(hexadecimal):
+    # Convertir a minúsculas para hacer las cosas más simples
+    hexadecimal = hexadecimal.lower()
+    # La debemos recorrer del final al principio, así que la invertimos
+    hexadecimal = hexadecimal[::-1]
+    decimal = 0
+    posicion = 0
+    for digito in hexadecimal:
+        # Necesitamos que nos dé un 10 para la A, un 9 para el 9, un 11 para la B, etcétera
+        valor = obtener_valor_real(digito)
+        elevado = 16 ** posicion
+        equivalencia = elevado * valor
+        decimal += equivalencia
+        posicion += 1
+    return decimal
+#-----------------------------------------------------------------------------------------------#
+###Fin de funciones de parzibyte
+
+## Metodo que convierte un numero binario a decimal
 def binario_a_decimal(binario):
+    posicion = 0
+    decimal = 0
+    binario = binario[::-1]
+    for digito in binario:
+        # Elevar 2 a la posición actual
+        multiplicador = 2**posicion
+        decimal += int(digito) * multiplicador
+        posicion += 1
+    return decimal
+#Fin del método de binario a decimal#
+#-----------------------------------------------------------------------------------------------#
+#Método de conversión de decimal a octal#
+def decimal_a_octal(decimal):
+    octal=""
+    while decimal > 0:
+        residuo = decimal % 8
+        octal = str(residuo) + octal
+        decimal = int(decimal/8)
+    return octal
+#Fin del método de decimal a octal#
+#-----------------------------------------------------------------------------------------------#
+#Método de conversión de octal a decimal#
+def octal_a_decimal(octal):
+    decimal=0
+    posicion=0
 
-	decimal = 0
-	n = 0
-	for bit in binario[::-1]:
-
-		decimal += int(bit) * 2**n
-		n += 1
-
-	return decimal
-
-
-## Funcion que convierte un numero decimal a binario
+    octal = octal[::-1]
+    for digito in octal:
+        valor_entero = int(digito)
+        numero_elevado = int(8 ** posicion)
+        equivalencia = int(numero_elevado * valor_entero)
+        decimal+= equivalencia
+        posicion+=1
+    return decimal
+#Fin del método de conversión de octal a decimal#
+#-----------------------------------------------------------------------------------------------#
+## Funcion que convierte un numero decimal a binario 
 def decimal_a_binario(decimal, n=None):
 
 	if n == None:
@@ -44,9 +134,9 @@ def decimal_a_binario(decimal, n=None):
 	
 
 	return ''.join([str(bit) for bit in binario])
-
-#########Complemento#####
-
+#Fin de la función de conversión de decimal a binario#
+#-----------------------------------------------------------------------------------------------#
+#Parte de los complementos 1 y 2#
 ## Funcion que obtiene el complemento a 1 de numero
 def complemento_a_1(binario):
 
@@ -54,7 +144,8 @@ def complemento_a_1(binario):
 	complemento = (2**n - 1) - binario_a_decimal(binario)
 
 	return decimal_a_binario(complemento, n)
-
+#Fin del complemento 1#
+#-----------------------------------------------------------------------------------------------#
 ## Funcion que obtiene el complemento a 2 de numero
 def complemento_a_2(binario):
 
@@ -62,71 +153,198 @@ def complemento_a_2(binario):
 	complemento = 2**n - binario_a_decimal(binario)
 
 	return decimal_a_binario(complemento, n)
+#Fin del complemento 2#
+#-----------------------------------------------------------------------------------------------#
+#Conversión a hexadecimal#
+def Conversion_a_hexa(numero,base):
+    if base==10:
+        hexa=decimal_a_hexadecimal(int(numero))
+        Binario=decimal_a_binario(int(numero))
+        complemento1=complemento_a_1(Binario)
+        complemento2=complemento_a_2(Binario)
+        print("El numero "+str(numero)+" en hexa es: ",hexa)
+        print("El complemento a 1 de "+ str(numero) +" es: "+complemento1)
+        print("El complemento a 2 de "+ str(numero) +" es: "+complemento2+"\n")
+    if base==8:
+        decimal=octal_a_decimal(numero)
+        Hexadecimal=decimal_a_hexadecimal(decimal)
+        Binario=decimal_a_binario(int(decimal))
+        complemento1=complemento_a_1(Binario)
+        complemento2=complemento_a_2(Binario)
+        print("El numero "+str(numero)+" en hexa es: ",Hexadecimal)
+        print("El complemento a 1 de "+ str(numero) +" es: "+complemento1)
+        print("El complemento a 2 de "+ str(numero) +" es: "+complemento2+"\n")
+    if base==2:
+        decimal=binario_a_decimal(numero)
+        Hexadecimal=decimal_a_hexadecimal(decimal)
+        Binario=decimal_a_binario(int(decimal))
+        complemento1=complemento_a_1(Binario)
+        complemento2=complemento_a_2(Binario)
+        print("El numero "+str(numero)+" en hexa es: ",Hexadecimal)
+        print("El complemento a 1 de "+ str(numero) +" es: "+complemento1)
+        print("El complemento a 2 de "+ str(numero) +" es: "+complemento2+"\n")
+    
 
-###Fin de complemento#####
-
-##Conforme a la base seleccioando realizara la conversion
-def RealizarConversion(numero,base):
+#Fin del método de conversión#
+#-----------------------------------------------------------------------------------------------#
+##Conforme a la base seleccioando realizara la conversion a binario
+def Conversion_a_binario(numero,base):
 
             if base==10:
-                dec_to_bin=decimal_a_binario(numero)
-                print("El numero "+ str(numero) +" en binario es : ",dec_to_bin)
-                print("El complemento a 1 de "+ str(dec_to_bin) +" es: ", complemento_a_1(dec_to_bin))
-                print("El complemento a 2 de "+ str(dec_to_bin) +" es: ", complemento_a_2(dec_to_bin)+"\n")
-            elif base == 2:
-                eleccion="Binario"
-            elif base == 3:
-                eleccion="Octal"
-            elif base == 4:
-                eleccion="Hexadecimal"
+                Binario=decimal_a_binario(int(numero))
+                complemento1=complemento_a_1(Binario)
+                complemento2=complemento_a_2(Binario)
+                print("El numero "+ str(numero) +" en binario es : ",Binario)
+                print("El complemento a 1 de "+ str(Binario) +" es: "+complemento1)
+                print("El complemento a 2 de "+ str(Binario) +" es: "+complemento2+"\n")
+            if base == 8:
+                decimal=octal_a_decimal(numero)
+                Binario=decimal_a_binario(decimal)
+                complemento1=complemento_a_1(Binario)
+                complemento2=complemento_a_2(Binario)
+                print("El numero "+ str(numero) +" en binario es : ",Binario)
+                print("El complemento a 1 de "+ str(Binario) +" es: "+complemento1)
+                print("El complemento a 2 de "+ str(Binario) +" es: "+complemento2+"\n")
+            if base == 16:
+                Decimal=hexadecimal_a_decimal(numero)
+                Binario=decimal_a_binario(Decimal)
+                complemento1=complemento_a_1(Binario)
+                complemento2=complemento_a_2(Binario)
+                print("El numero "+ str(numero) +" en binario es : ",Binario)
+                print("El complemento a 1 de "+ str(Binario) +" es: "+complemento1)
+                print("El complemento a 2 de "+ str(Binario) +" es: "+complemento2+"\n")
+                
+#Fin del método de conversión a binario#
+#-----------------------------------------------------------------------------------------------#
+#Metodo para hacer la convercion a decimal 
+def Conversion_a_decimal(numero,base):
 
-##Pregunta a que base corresponde el numero               
-def TipodeBase_del_Numero(numero):
-    
+    if base==2:
+        decimal=binario_a_decimal(numero)
+        complemento1=complemento_a_1(numero)
+        complemento2=complemento_a_2(numero)
+        print("El numero "+str(numero)+" base(2) en base 10 es: ",decimal)
+        print("El complemento a 1 de "+ str(numero) +" es: "+complemento1)
+        print("El complemento a 2 de "+ str(numero) +" es: "+complemento2+"\n")
+    if base==8:
+        decimal=octal_a_decimal(numero)
+        Binario=decimal_a_binario(decimal)
+        complemento1=complemento_a_1(Binario)
+        complemento2=complemento_a_2(Binario)
+        print("El numero "+str(numero)+" base(8) en base 10 es: ",decimal)
+        print("El complemento a 1 de "+ str(numero) +" es: "+complemento1)
+        print("El complemento a 2 de "+ str(numero) +" es: "+complemento2+"\n")
+    if base==16:
+        Decimal=hexadecimal_a_decimal(numero)
+        Binario=decimal_a_binario(Decimal)
+        complemento1=complemento_a_1(Binario)
+        complemento2=complemento_a_2(Binario)
+        print("El numero "+str(numero)+" base(16) en base 10 es: ",Decimal)
+        print("El complemento a 1 de "+ str(numero) +" es: "+complemento1)
+        print("El complemento a 2 de "+ str(numero) +" es: "+complemento2+"\n")
+#Fin del método#
+#-----------------------------------------------------------------------------------------------#
+#Metodo para hacer la convercion a octal
+def Conversion_a_octal(numero,base):
+    if base==10:
+        octal=decimal_a_octal(int(numero))
+        Binario=decimal_a_binario(int(numero))
+        complemento1=complemento_a_1(Binario)
+        complemento2=complemento_a_2(Binario)
+        print("El numero "+str(numero)+"(10) en base 8 es: ",octal)
+        print("El complemento a 1 de "+ str(numero) +" es: "+complemento1)
+        print("El complemento a 2 de "+ str(numero) +" es: "+complemento2+"\n")
+    if base==2:#recibe un numero binario
+        decimal=binario_a_decimal(numero)
+        octal=decimal_a_octal(decimal)
+        complemento1=complemento_a_1(numero)
+        complemento2=complemento_a_2(numero)
+        print("El numero "+str(numero)+"(2) en base 8 es: ",octal)
+        print("El complemento a 1 de "+ str(numero) +" es: "+complemento1)
+        print("El complemento a 2 de "+ str(numero) +" es: "+complemento2+"\n")
+    if base==16:#Recibe un hexadecimal
+        Decimal=hexadecimal_a_decimal(numero)
+        octal=decimal_a_octal(Decimal)
+        Binario=decimal_a_binario(int(Decimal))
+        complemento1=complemento_a_1(Binario)
+        complemento2=complemento_a_2(Binario)
+        print("El numero "+str(numero)+"(16) en base 8 es: ",octal)
+        print("El complemento a 1 de "+ str(numero) +" es: "+complemento1)
+        print("El complemento a 2 de "+ str(numero) +" es: "+complemento2+"\n")
+
+#-----------------------------------------------------------------------------------------------#
+##Metodo en el que se escoje a que base se va a realizar la conversion
+def Elegir_conversion(numero,base):
+#Inicio del bucle del menú secundario de elección de conversión#
         opc=True
         while opc:
-            selecciono=int(input("\nSeleccione el tipo de base del numero a ingresar\n"
-                +"\n1)10"
-                +"\n2)2"
-                +"\n3)8"
-                +"\n4)16\n"))
-            if selecciono==1:
-                RealizarConversion(numero,10)
+            selecciono=int(input("\nA que base desea convertir el numero "+str(numero)+"\n"
+                +"\n1)Decimal(10)"
+                +"\n2)Binario(2)"
+                +"\n3)Octal(8)"
+                +"\n4)Hexadecimal(16)"))
+            #Selección de la conversión a base Decimal#
+            if (selecciono==1) and (base != 10):
+                Conversion_a_decimal(numero,base)
                 opc=False
-            elif selecciono == 2:
+            #Selección de la conversión a base Binario#
+            if (selecciono == 2)and (base != 2):
+                Conversion_a_binario(numero,base)
                 opc=False
-            elif selecciono == 3:
+            #Selección de la conversión a base octal#
+            if (selecciono == 3) and (base != 8):
+                Conversion_a_octal(numero,base)
                 opc=False
-            elif selecciono == 4:
+            #Selección de la conversión a base Hexadecimal#
+            if (selecciono == 4) and (base != 16):
+                Conversion_a_hexa(numero,base)
                 opc=False
-            elif selecciono !="":
+            if selecciono > 4:
                 print("\nValor no valido intentelo de nuevo\n")
-
-
+#Fin del menú secundario de selección#
+#-----------------------------------------------------------------------------------------------#  
 #######################################
 ##                MAIN               ##
 #######################################
-
+                
+#Inicio del bucle para el menú principal#
 opc=True
 while opc:
-     
-        seleccion=int(input("Seleccione la conversion requerida\n"
-            +"\n1)Decimal"
-            +"\n2)Binaria"
-            +"\n3)Octal"
-            +"\n4)Hexadecimal"
-            +"\n5)Salir\n")) 
+
+        print("****************************************************************") 
+        seleccion=int(input("Seleccione la base del numero que va a ingresar\n"
+            +"\n1)Decimal(10)"
+            +"\n2)Binario(2)"
+            +"\n3)Octal(8)"
+            +"\n4)Hexadecimal(16)"
+            +"\n5)Salir\n"))
+        #Acción de la consola si se selecciona el numero 1(Decimal)#
         if seleccion==1:
-            numero=int(input("Ingrese el numero: "))
-            TipodeBase_del_Numero(numero)           
+            numero=input("Ingrese el numero: ")
+            base=10
+            Elegir_conversion(numero, base)
+        #Acción de la consola si se selecciona el numero 2(Binario)# 
         elif seleccion==2:
-            print("\n Binario") 
+            base=2
+            numero=input("Ingrese el numero: ")
+            Elegir_conversion(numero, base)
+        #Acción de la consola si se selecciona el numero 3(Octal)#    
         elif seleccion==3:
-            print("\n Octal") 
+            base=8
+            numero=input("Ingrese el numero: ")
+            Elegir_conversion(numero, base)
+        #Acción de la consola si se selecciona el numero 4(Hexadecimal)#
         elif seleccion==4:
-            print("\n Hexadecimal")
+            base=16
+            numero=input("Ingrese el numero: ")
+            Elegir_conversion(numero, base)
+        #Acción de la consola si se selecciona el numero 5(Salir)#
         elif seleccion==5:
+            print("Hasta pronto !")
             opc=False
-        elif seleccion !="":
+        #Exepción si se ingresa un número indebido# 
+        elif seleccion>5 or seleccion<0:
             print("\nValor no valido intentelo de nuevo\n")
+#Fin del menú#
+#-----------------------------------------------------------------------------------------------#
 
