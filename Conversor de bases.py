@@ -173,7 +173,7 @@ def complemento_base(numero, base_del_numero):
             resultado=0
 
             if(numero_en_complemento_de_base!=0):
-                resultado=decimal_a_hexadecimal(numero_en_complemento_de_base)
+                resultado=numero_en_complemento_de_base
             
             return resultado
 
@@ -191,7 +191,7 @@ def complemento_base(numero, base_del_numero):
             resultado=0
 
             if(numero_en_complemento_de_base!=0):
-                resultado=decimal_a_hexadecimal(numero_en_complemento_de_base)
+                resultado=numero_en_complemento_de_base
             
             return resultado
 
